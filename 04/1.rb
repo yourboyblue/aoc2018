@@ -1,7 +1,12 @@
 require "test/unit"
 require "pry"
 
-TIMESTAMP_RE = /\[(\d+)-(\d+)-(\d+)\s(\d+):(\d+)\]/
+ENTRY_REGEXP = /\[(\d+)-(\d+)-(\d+)\s(\d+):(\d+)\]\s(.*)/
+
+def run
+  lines = File.read('input.txt').split("\n")
+  sorted_entries = lines.map { |l| parse(l) }.sort
+end
 
 Timestamp = Struct.new(:y, :m, :d, :h, :s) do
   def <=>(t2)
@@ -18,15 +23,34 @@ Timestamp = Struct.new(:y, :m, :d, :h, :s) do
 end
 
 def parse(ts_string)
-  TIMESTAMP_RE.match(ts_string) do |m|
-    Timestamp.new(*m.captures)
+  ENTRY_REGEXP.match(ts_string) do |m|
+    return [Timestamp.new(*m.captures[0..4]), m.captures[-1]]
   end
 end
 
+class Entry
+  def initialize(timestamp, description)
+    @timestamp = timestamp
+    @description = description
+  end
+
+  attr_reader :timestamp
+
+  def <=>(e2)
+    timestamp <=> e2.timestamp
+  end
+
+  def shift_change?
+    /#\d+/.match?(@description)
+  end
+end
+
+run
+
 class DayFourTest < Test::Unit::TestCase
   def test_ts_sort
-    unsorted = ['[1518-11-17 00:21]', '[1518-06-13 00:02]']
-    sorted = unsorted.map { |ts| parse(ts) }.sort.map(&:to_s)
+    unsorted = ['[1518-11-17 00:21] wakes up', '[1518-06-13 00:02] wakes up']
+    sorted = unsorted.map { |ts| parse(ts)[0] }.sort.map(&:to_s)
 
     assert_equal(sorted, ['[1518-06-13 00:02]', '[1518-11-17 00:21]'])
   end
