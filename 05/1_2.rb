@@ -69,14 +69,23 @@ Unit = Struct.new(:left, :right, :type) do
   end
 end
 
+# Part 1
 puts sanitize_polymer(Polymer.new(INPUT)).to_s.length
+
+# Part 2
+by_letter = ('a'..'z').map do |l|
+  stripped_input = INPUT.gsub(/[#{l}#{l.upcase}]/, '')
+  full_prune = sanitize_polymer(Polymer.new(stripped_input))
+  [l, full_prune.to_s.length]
+end
+puts by_letter.sort_by { |a| a[1] }.first.last
 
 class DayFiveTest < Test::Unit::TestCase
   def test_unit_match
     polymer = Polymer.new('Aa')
     left = polymer.head
 
-    assert_equal(left.match?, true)
+    assert_equal(true, left.match?)
   end
 
   def test_unit_no_match
