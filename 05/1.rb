@@ -83,35 +83,35 @@ class DayFiveTest < Test::Unit::TestCase
     polymer = Polymer.new('Ab')
     left = polymer.head
 
-    assert_equal(left.match?, false)
+    assert_equal(false, left.match?,)
   end
 
   def test_polymer_to_s
     polymer = Polymer.new('AbMeweGSDfsdsf')
-    assert_equal(polymer.to_s, 'AbMeweGSDfsdsf')
+    assert_equal('AbMeweGSDfsdsf', polymer.to_s)
   end
 
   def test_sanitizing
     polymer = Polymer.new('AaMeeeeeeGgH')
     sanitized = sanitize_polymer(polymer).to_s
-    assert_equal(sanitized, 'MeeeeeeH')
+    assert_equal('MeeeeeeH', sanitized)
   end
 
   def test_end_pair
     polymer = Polymer.new('AGg')
     sanitized = sanitize_polymer(polymer).to_s
-    assert_equal(sanitized, 'A')
+    assert_equal('A', sanitized)
   end
 
   def test_collapse
     polymer = Polymer.new('AGgaB')
     sanitized = sanitize_polymer(polymer).to_s
-    assert_equal(sanitized, 'B')
+    assert_equal('B', sanitized)
   end
 
   def test_self_destruct
     polymer = Polymer.new('AGga')
     sanitized = sanitize_polymer(polymer).to_s
-    assert_equal(sanitized, '')
+    assert_equal('', sanitized)
   end
 end
